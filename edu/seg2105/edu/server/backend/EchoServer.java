@@ -45,12 +45,29 @@ public class EchoServer extends AbstractServer
    * @param msg The message received from the client.
    * @param client The connection from which the message originated.
    */
-  public void handleMessageFromClient
-    (Object msg, ConnectionToClient client)
-  {
-    System.out.println("Message received: " + msg + " from " + client);
-    this.sendToAllClients(msg);
-  }
+  public void handleMessageFromClient(Object msg, ConnectionToClient client) {
+	    String message = msg.toString();
+	    
+	    try {
+	      if (message.startsWith("#login ")) {
+	    	  
+	         if (client.getInfo("loginId") != null) {
+	             client.sendToClient("Login must be first command");
+	             client.close();
+	              return;
+	         }
+
+	        String loginId = message.substring(7).trim();
+	         client.setInfo("loginId", loginId);
+	         client.sendToClient("Login successful");
+	         
+	        this.sendToAllClients(loginId + ": " + message);
+	      }
+	    } catch (Exception e) {
+	      System.out.println("Could not recieve message");
+	    }
+	  }
+	  
     
   /**
    * This method overrides the one in the superclass.  Called
@@ -72,7 +89,22 @@ public class EchoServer extends AbstractServer
       ("Server has stopped listening for connections.");
   }
   
+  /**
+   * This method overrides the one in the superclass called when a client connects
+   */
+  @Override
+  protected void clientConnected(ConnectionToClient client) {
+	  System.out.println("Client connected.");
+  }
   
+  /**
+   * This method overrides the one in the superclass called when a client disconnects
+   */
+  synchronized protected void clientDisconnected(ConnectionToClient client) {
+	  System.out.println("Client disconnected.");
+  }
+  
+
   //Class methods ***************************************************
   
   /**

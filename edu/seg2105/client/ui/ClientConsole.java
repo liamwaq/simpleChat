@@ -47,14 +47,15 @@ public class ClientConsole implements ChatIF
   /**
    * Constructs an instance of the ClientConsole UI.
    *
+   * @param loginID the ID to log in with
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ClientConsole(String host, int port) 
+  public ClientConsole(String loginID, String host, int port) 
   {
     try 
     {
-      client= new ChatClient(host, port, this);
+      client= new ChatClient(loginID, host, port, this);
       
       
     } 
@@ -107,19 +108,31 @@ public class ClientConsole implements ChatIF
     System.out.println("> " + message);
   }
 
+
+  
   
   //Class methods ***************************************************
   
   /**
    * This method is responsible for the creation of the Client UI.
    *
-   * @param args[0] The host to connect to.
+   * @param args[0] The host and port to connect to.
    */
   public static void main(String[] args) 
   {
-    String host = "";
-
-
+	String host = "";
+    int port = DEFAULT_PORT;
+    String loginID = "4555";
+    
+    try
+    {
+    	loginID = args[0];
+    }
+    catch(ArrayIndexOutOfBoundsException e) 
+    {
+    	
+    }
+    
     try
     {
       host = args[0];
@@ -128,7 +141,15 @@ public class ClientConsole implements ChatIF
     {
       host = "localhost";
     }
-    ClientConsole chat= new ClientConsole(host, DEFAULT_PORT);
+    
+    try { 
+    	port = Integer.parseInt(args[0]);
+    }
+    catch(ArrayIndexOutOfBoundsException e) {
+    	port = DEFAULT_PORT;
+    }
+    
+    ClientConsole chat= new ClientConsole(loginID, host, port);
     chat.accept();  //Wait for console data
   }
 }
