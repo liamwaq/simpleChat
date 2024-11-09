@@ -122,7 +122,7 @@ public class ClientConsole implements ChatIF
   {
 	String host = "";
     int port = DEFAULT_PORT;
-    String loginID = "4555";
+    String loginID = null;
     
     try
     {
